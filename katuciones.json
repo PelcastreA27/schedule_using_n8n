@@ -1,0 +1,463 @@
+{
+  "name": "katuciones",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "vacations",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -256,
+        -16
+      ],
+      "id": "448ee34d-4eb4-4203-ad7d-a75cb9ad1386",
+      "name": "Webhook",
+      "webhookId": "ae3f6941-f34b-401f-8bb0-2b0b5d5e43e0"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "791cf92a-9f78-4d6d-8c69-3ec7f0dc2f69",
+              "name": "idForm",
+              "value": "={{ $json.body.idForm }}",
+              "type": "string"
+            },
+            {
+              "id": "e6756851-6400-41b4-8437-731884625ff5",
+              "name": "tipoSol",
+              "value": "={{ $json.body['Tipo De Solicitud'] }}",
+              "type": "string"
+            },
+            {
+              "id": "53cb4cb1-fb02-4f2d-b277-8d914a6d553f",
+              "name": "decrpSol",
+              "value": "={{ $json.body['Descripción Breve'] }}",
+              "type": "string"
+            },
+            {
+              "id": "c346349b-8c4a-440a-90ad-cf87b56a1a81",
+              "name": "fecha_inicio",
+              "value": "={{ $json.body['Fecha Inicio'] }}",
+              "type": "string"
+            },
+            {
+              "id": "cfd0c7ba-e4bb-4f9b-bad8-c50b69708a7f",
+              "name": "fecha_fin",
+              "value": "={{ $json.body['Fecha Fin'] }}",
+              "type": "string"
+            },
+            {
+              "id": "b2b1d58c-7794-41b2-9828-fb2f8d0a946e",
+              "name": "actividadespendientes",
+              "value": "={{ $json.body['¿Tienes Actividades Pendientes?'] }}",
+              "type": "string"
+            },
+            {
+              "id": "5af2c629-839f-4ea1-9142-25960acf1529",
+              "name": "detalleactividades",
+              "value": "={{ $json.body['En caso de responder si a la pregunta anterior, detalla cuales son dichas actividades.'] }}",
+              "type": "string"
+            },
+            {
+              "id": "6f5c4f26-895d-4daf-a017-e760db5a7ae6",
+              "name": "correo_sol",
+              "value": "={{ $json.body.correoSolicitante }}",
+              "type": "string"
+            },
+            {
+              "id": "eb9e5a93-c179-48b7-8797-5b8841d12fdc",
+              "name": "correo_responsable",
+              "value": "={{ $json.body['Correo Del Responsable'] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        0,
+        -16
+      ],
+      "id": "e27ca114-d0df-4341-93ef-1305e2b34e89",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Edit Fields').item.json.correo_responsable }}",
+        "subject": "=Solicitud de  {{ $json.tipoSol2 }}",
+        "message": "=<p>Que tal,</p>  <p>Solicito <b>{{ $('Edit Fields').item.json.tipoSol }}</b> por el siguiente motivo: <b>{{ $('Edit Fields').item.json.decrpSol }}</b>.<br> De la fecha <b>{{ $('Edit Fields').item.json.fecha_inicio }}</b> a <b>{{ $('Edit Fields').item.json.fecha_fin }}</b>.</p>  <p><b>Actividades Pendientes:</b><br>{{ $('Edit Fields').item.json.actividadespendientes }}<br> {{ $('Edit Fields').item.json.detalleactividades }}</p>\n<p>Por favor, selecciona una opción:</p>\n<p>\n  <a href=\"https://avlp.app.n8n.cloud/webhook/aprobacion?id={{$json.idForm}}&status=aprobado&fechaIni={{ $('Edit Fields').item.json.fecha_inicio }}&fechaFin={{ $('Edit Fields').item.json.fecha_fin }}&tipoSol={{ $('Edit Fields').item.json.tipoSol }}&email={{ $json.email2 }}\"\n     target=\"_blank\"\n     style=\"background-color:#4CAF50;color:white;padding:10px 15px;text-decoration:none;border-radius:6px;font-family:Arial, sans-serif;font-size:14px;\">\n     ✅ Aprobar\n  </a>\n  &nbsp;\n  <a href=\"https://avlp.app.n8n.cloud/webhook/aprobacion?id={{$json.idForm}}&status=rechazado&fechaIni={{ $('Edit Fields').item.json.fecha_inicio }}&fechaFin={{ $('Edit Fields').item.json.fecha_fin }}&tipoSol={{ $json.tipoSol2 }}&email={{$json.email2 | encodeURIComponent}}\"\n     target=\"_blank\"\n     style=\"background-color:#f44336;color:white;padding:10px 15px;text-decoration:none;border-radius:6px;font-family:Arial, sans-serif;font-size:14px;\">\n     ❌ Rechazar\n  </a>\n</p>\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        496,
+        -128
+      ],
+      "id": "4ec17072-190f-44d4-9bc8-f702b5fd7755",
+      "name": "Send a message",
+      "webhookId": "dc03b193-b2e4-40e5-9f58-713f1d3729c6",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "BMdQXVb7UKTcOgiY",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "path": "aprobacion",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -256,
+        160
+      ],
+      "id": "e26bce27-05d2-4182-91d4-b252c2a441ed",
+      "name": "Webhook1",
+      "webhookId": "62e97a51-d582-4aa8-9cb7-d0a7d1f38291"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{$json[\"query\"][\"status\"]}}",
+                    "rightValue": "aprobado",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "e6f04b22-2daf-4427-a945-395437e89097"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "8550dbd4-abb7-41b4-bdab-ef7f509af3f3",
+                    "leftValue": "={{$json[\"query\"][\"status\"]}}",
+                    "rightValue": "rechazado",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.3,
+      "position": [
+        -48,
+        160
+      ],
+      "id": "3e9ca2bb-e59b-4313-ad2f-fa4997ac49f2",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "<html>\n  <body style=\"font-family: Arial; text-align: center; padding: 40px; background-color: #f8f8f8;\">\n    <div style=\"background: white; padding: 30px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1);\">\n      <h2 style=\"color: #4CAF50;\">✅ ¡Solicitud aprobada correctamente!</h2>\n      <p>Tu respuesta ha sido registrada en el sistema.</p>\n    </div>\n  </body>\n</html>\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        160,
+        160
+      ],
+      "id": "6e9af088-32c3-4940-bb10-3c222796bdca",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{$json.emailrequisitor}}",
+        "subject": "=La Solicitud fue {{$json.status}}",
+        "message": "=La solicitud {{ $json.tipoSol}} fue  {{$json.status}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        784,
+        96
+      ],
+      "id": "f299981f-97ee-4963-b148-27baebf75c86",
+      "name": "Send a message1",
+      "webhookId": "26fffa09-884a-4bcc-98e7-0092ca68fdb8",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "BMdQXVb7UKTcOgiY",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "229cfb8d-4dbf-47a7-a06d-de7e06aa821b",
+              "name": "=status",
+              "value": "={{$json[\"query\"][\"status\"]}}",
+              "type": "string"
+            },
+            {
+              "id": "e922e434-9efe-4eac-8627-3f8bcc2a9dca",
+              "name": "=tipoSol",
+              "value": "={{$json[\"query\"][\"tipoSol\"]}}",
+              "type": "string"
+            },
+            {
+              "id": "c16b161b-28f7-46cb-b125-6044f519c4ca",
+              "name": "=emailrequisitor",
+              "value": "={{$json[\"query\"][\"email\"]}}",
+              "type": "string"
+            },
+            {
+              "id": "e7a8f17c-f953-428a-94cf-10add3ac8f0b",
+              "name": "=fechaIni",
+              "value": "={{$json[\"query\"][\"fechaIni\"]}}",
+              "type": "string"
+            },
+            {
+              "id": "aaaf42ef-edff-4ad7-aba6-98bb1c396ef6",
+              "name": "=fechaFin",
+              "value": "={{$json[\"query\"][\"fechaFin\"]}}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        368,
+        192
+      ],
+      "id": "730e8bd2-856d-451a-ad4e-504f4462f7fd",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "aca8f32f-9a11-49a9-89a4-2978c904bc06",
+              "name": "idForm",
+              "value": "={{ $json.idForm }}",
+              "type": "string"
+            },
+            {
+              "id": "7bfb9885-b867-4635-a03d-2c86e88b0474",
+              "name": "tipoSol2",
+              "value": "={{ $json.tipoSol }}",
+              "type": "string"
+            },
+            {
+              "id": "cebe6010-60b6-407d-b2cf-b6105988d140",
+              "name": "email2",
+              "value": "={{ $json.correo_sol }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        208,
+        -16
+      ],
+      "id": "abd8bb19-dcef-4e19-91a5-c28642e32133",
+      "name": "Edit Fields2"
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "1d961865bd77927e998106ef416d0718f05b835e4ade8a220b9764a0ae0b7506@group.calendar.google.com",
+          "mode": "list",
+          "cachedResultName": "KATU Permisos"
+        },
+        "start": "={{$json.fechaIniISO}}",
+        "end": "={{$json.fechaFinISO}}",
+        "additionalFields": {
+          "summary": "=Solicitud de {{ $json.tipoSol}} del compañer@ {{$json.emailrequisitor}}"
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        720,
+        304
+      ],
+      "id": "e3c78f58-7641-4646-a0f1-9b73e9e8d62f",
+      "name": "Create an event",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "axSFUOXuKFRjy6LM",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Verificar que las variables existan\nconst fechaIni = $json.fechaIni;\nconst fechaFin = $json.fechaFin;\n\nif (!fechaIni || !fechaFin) {\n  throw new Error(\"Las variables fechaIni o fechaFin no están definidas\");\n}\n\n// Crear fechas en formato ISO\nconst fechaIniISO = new Date(fechaIni + 'T09:00:00-06:00').toISOString();\nconst fechaFinISO = new Date(fechaFin + 'T18:00:00-06:00').toISOString();\n\n// Retornar en el formato que n8n espera\nreturn {\n  json: {\n    ...$json,\n    fechaIniISO,\n    fechaFinISO\n  }\n};\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        528,
+        304
+      ],
+      "id": "700d03aa-7534-4664-afc1-5ddb286bc658",
+      "name": "Code in JavaScript"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook1": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Respond to Webhook": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Send a message1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields2": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Create an event",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "68cf87b5-bc19-4a1f-bb2d-ce7f1e0d35b7",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "dc060d6669ece14ee0df618e9b14a47d755b5ec3cfc6b604264ad75df1daee49"
+  },
+  "id": "YMjvJoJh5FPBIadz",
+  "tags": []
+}
